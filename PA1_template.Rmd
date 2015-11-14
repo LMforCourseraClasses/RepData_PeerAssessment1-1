@@ -1,25 +1,61 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
 output: 
-  html_document:
-    keep_md: true
+  html_document: 
+    fig_caption: yes
+    keep_md: yes
 ---
+#    Reproducible Research Peer Assessment I
+##   LMforCoursera
+##   November 13,2015
 
+This is an R Markdown document for analyzing and presenting results from the
+data for Peer Assessment I in the Coursera class Reproducible Research. The
+output will be an html file.
 
-## Loading and preprocessing the data
+First, read the data into a dataframe. Then remove rows that have step values of NA.
 
+```{r ReadData, echo=TRUE}
+   activitydata <- read.csv("C:/Users/Matthew/Documents/Lucia/CourseraR/RepData_PeerAssessment1-1/activity.csv", header=TRUE, colClasses = c("integer", "Date", "integer"))
+   actualsteps <- activitydata[!is.na(activitydata[,1]),]
+```
 
+Calculate the total number of steps taken each day and make a histogram.
 
-## What is mean total number of steps taken per day?
+```{r TotalStepsEachDay, echo=TRUE}
+   TotalStepsEachDay <- tapply(actualsteps$steps, actualsteps$date, sum)
+   hist(TotalStepsEachDay)
+```
 
+Calculate and display the mean and median of the total number of steps taken each day.
 
+```{r TotalStepsMeanAndMedian, echo=TRUE}
+   print(paste("The mean of TotalStepsEachDay is", mean(TotalStepsEachDay)))
+   print(paste("The median of TotalStepsEachDay is",
+               median(TotalStepsEachDay)))
+```
 
-## What is the average daily activity pattern?
+Calculate the average number of steps taken in a time interval averaged across all days. Make a time series plot. Identify the time interval with the maximum average number of steps.
 
+```{r AverageSteps, echo=TRUE}
+   TimeIntervalSteps <- cbind(actualsteps[,3],actualsteps[,1])
+   TimeIntervalAverageSteps <- aggregate(TimeIntervalSteps[,2],
+                                         list(TimeIntervalSteps[,1]),mean)
+   AverageStepsTimeSeries <- ts(TimeIntervalAverageSteps)
+   plot(AverageStepsTimeSeries[,1], AverageStepsTimeSeries[,2], type = "l",
+       xlab = "Time Interval", ylab = "Average Steps")
+   MaxSteps <- TimeIntervalAverageSteps[which.max(TimeIntervalAverageSteps[,2]),]
+   print("The time interval and average value for the maximum # of steps:")
+   print(MaxSteps)
+```
 
+Calculate and report the total number of missing values in this dataset.
 
-## Imputing missing values
+```{r MissingValues, echo=TRUE}
+   MissingValues <- activitydata[is.na(activitydata)]
+   print(paste("The total number of missing values is", length(MissingValues)))
+```
 
+Looking at the original set of data, in rows where the step value is NA, replace the step value with the average number of steps for the same time interval.
 
-
-## Are there differences in activity patterns between weekdays and weekends?
+```{r ValueReplacement, echo=TRUE}
+   ImputedSteps <- activitydata[]
