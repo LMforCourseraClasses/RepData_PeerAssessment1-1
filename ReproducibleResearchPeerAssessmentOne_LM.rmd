@@ -1,0 +1,50 @@
+#    Reproducible Research Peer Assessment I
+##   LMforCoursera
+##   November 13,2015
+
+This is an R Markdown document for analyzing and presenting results from the
+data for Peer Assessment I in the Coursera class Reproducible Research. The
+output will be an html file.
+
+First, read the data into a dataframe. Then remove rows that have step values of NA.
+
+```{r ReadData, echo=TRUE}
+   activitydata <- read.csv("C:/Users/Matthew/Documents/Lucia/CourseraR/RepData_PeerAssessment1-1/activity.csv", header=TRUE, colClasses = c("integer", "Date", "integer"))
+   actualsteps <- activitydata[!is.na(activitydata[,1]),]
+```
+
+Calculate the total number of steps taken each day and make a histogram.
+
+```{r TotalStepsEachDay, echo=TRUE}
+   TotalStepsEachDay <- tapply(actualsteps$steps, actualsteps$date, sum)
+   hist(TotalStepsEachDay)
+```
+
+Calculate and display the mean and median of the total number of steps taken each day.
+
+```{r TotalStepsMeanAndMedian, echo=TRUE}
+   print(paste("The mean of TotalStepsEachDay is", mean(TotalStepsEachDay)))
+   print(paste("The median of TotalStepsEachDay is",
+               median(TotalStepsEachDay)))
+```
+
+Calculate the average number of steps taken in a time interval averaged across all days. Make a time series plot. Identify the time interval with the maximum average number of steps.
+
+```{r AverageSteps, echo=TRUE}
+   TimeIntervalSteps <- cbind(actualsteps[,3],actualsteps[,1])
+   TimeIntervalAverageSteps <- aggregate(TimeIntervalSteps[,2],
+                                         list(TimeIntervalSteps[,1]),mean)
+   AverageStepsTimeSeries <- ts(TimeIntervalAverageSteps)
+   plot(AverageStepsTimeSeries[,1], AverageStepsTimeSeries[,2], type = "l",
+        xlab = "Time Interval", ylab = "Average Steps")
+   MaxSteps <- TimeIntervalAverageSteps[which.max(TimeIntervalAverageSteps[,2]),]
+   print("The time interval and average value for the maximum # of steps:")
+   print(MaxSteps)
+```
+
+Calculate and report the total number of missing values in this dataset.
+
+```{r MissingValues, echo=TRUE}
+   MissingValues <- activitydata[is.na(activitydata)]
+   print(paste("The total number of missing values is", length(MissingValues)))
+```
