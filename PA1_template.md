@@ -129,7 +129,7 @@ Make a histogram of the total number of steps taken each day from the ImputedSte
 ## [1] "The median of TotalImputedStepsEachDay is 10766.1886792453"
 ```
 
-The Mean of total steps taken each day calculated for the dataset with imputed values is the same as the mean for the original data. The median calculated for the dataset with imputed values is the same as the mean, While the median for the original dataset is an integer less than 0.012% different from the mean. So there is essentially no impact from imputing numbers this way for the missing data.
+The mean of total steps taken each day calculated for the dataset with imputed values is the same as the mean for the original data. The median calculated for the dataset with imputed values is the same as the mean, While the median for the original dataset is an integer less than 0.012% different from the mean. So there is essentially no impact from imputing numbers this way for the missing data.
 
 Now let's use the dataset with imputed values to examine whether activity as measured by steps differs between weekdays and weekends. First add a column to ImputedSteps, specifying whether the date is a weekday or a weekend.
 
@@ -150,5 +150,17 @@ Make separate time series plots of steps taken in each time interval for weekday
 
 
 ```r
-   ImputedTimeIntervalSteps <- cbind(ImputedSteps[,3],ImputedSteps[,1], ImputedSteps[,4])
+   TimeIntervalImputedSteps <- cbind(ImputedSteps[,4],ImputedSteps[,3], ImputedSteps[,1])
+   TimeIntervalAverageImputedSteps <- aggregate(TimeIntervalImputedSteps[,3],
+                  list(TimeIntervalImputedSteps[,2], TimeIntervalImputedSteps[,1]),mean)
+   WeekdayAverageImputedStepsTimeSeries <- ts(TimeIntervalAverageImputedSteps[1:288,])
+   WeekendAverageImputedStepsTimeSeries <- ts(TimeIntervalAverageImputedSteps[288:576,])
+   par(mfrow=c(2,1), cex=0.7)
+   plot(WeekdayAverageImputedStepsTimeSeries[,1], WeekdayAverageImputedStepsTimeSeries[,3],
+        type = "l", xlab = "Weekday Time Interval", ylab = "Average Imputed Steps")
+   plot(WeekendAverageImputedStepsTimeSeries[,1], WeekendAverageImputedStepsTimeSeries[,3],
+        type = "l", xlab = "Weekend Time Interval", ylab = "Average Imputed Steps")
 ```
+
+![](PA1_template_files/figure-html/TimeSeriesPlotsWeekdayAndWeekend-1.png) 
+
